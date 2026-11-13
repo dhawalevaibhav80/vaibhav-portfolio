@@ -1,0 +1,2482 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vaibhav Dhawale | Automobile Engineer &amp; Senior Motor Surveyor</title>
+  <meta name="description" content="Interactive 3D automotive engineering portfolio and motor survey profile of Vaibhav Vinayakrao Dhawale — 9+ years in forensic vehicle inspection, chassis alignment, and motor insurance claim auditing." />
+  <meta property="og:title" content="Vaibhav Dhawale | Automobile Engineer &amp; Senior Motor Surveyor" />
+  <meta property="og:description" content="Senior Inhouse Motor Surveyor and Automobile Engineer with over 9 years of expertise in forensic inspection, structural damage analysis, and motor claim auditing." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Fonts: Orbitron (Display), Inter (Body), JetBrains Mono (Tabular Telemetry) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Orbitron', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: '#06080d',
+            charcoal: '#0c111a',
+            panel: '#101723',
+            cyanAccent: '#06b6d4',
+            cyanBright: '#22d3ee',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- GSAP & Lucide Icons CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+
+  <style>
+    :root {
+      --bg-canvas: #06080d;
+      --border-hairline: rgba(148, 163, 184, 0.18);
+      --border-cyan: rgba(34, 211, 238, 0.36);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-canvas);
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Fullscreen Three.js Canvas Layer */
+    #webgl-stage {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 35%, #0f1b2d 0%, #070a10 58%, #040609 100%);
+    }
+
+    #webgl-stage canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    /* Atmospheric Scrim */
+    .stage-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 42%, transparent 32%, rgba(5, 7, 12, 0.52) 100%),
+        linear-gradient(to bottom, rgba(6, 8, 13, 0.72) 0%, transparent 18%, transparent 78%, rgba(6, 8, 13, 0.86) 100%);
+      transition: background 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stage-scrim.dashboard-mode {
+      background:
+        radial-gradient(ellipse at 50% 24%, transparent 22%, rgba(5, 8, 13, 0.78) 68%),
+        linear-gradient(to bottom, rgba(6, 8, 13, 0.82) 0%, rgba(6, 8, 13, 0.18) 22%, rgba(6, 8, 13, 0.85) 56%, rgba(6, 8, 13, 0.96) 100%);
+    }
+
+    /* Opaque-leaning Fixed Top Header & Footer (Prevents any scroll bleed-through) */
+    #main-header {
+      background-color: rgba(6, 9, 15, 0.97);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    #main-footer {
+      background-color: rgba(6, 9, 15, 0.98);
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    body.gpu-blur #main-header,
+    body.gpu-blur .tech-surface,
+    body.gpu-blur .content-deck {
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+    }
+
+    /* Isolated Content Deck Backing on Inner Pages */
+    .content-deck {
+      background: linear-gradient(180deg, rgba(7, 10, 17, 0.94) 0%, rgba(6, 8, 13, 0.98) 100%);
+      border-top: 1px solid rgba(34, 211, 238, 0.22);
+      box-shadow: 0 -24px 60px rgba(4, 6, 10, 0.92);
+    }
+
+    /* High-Contrast Glassmorphic Cards */
+    .tech-surface {
+      background: linear-gradient(165deg, rgba(16, 23, 36, 0.94) 0%, rgba(10, 14, 23, 0.96) 100%);
+      border: 1px solid var(--border-hairline);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        0 18px 42px -18px rgba(0, 0, 0, 0.8);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .tech-surface:hover {
+      border-color: rgba(34, 211, 238, 0.38);
+      box-shadow:
+        inset 0 1px 0 rgba(34, 211, 238, 0.16),
+        0 20px 44px -16px rgba(6, 182, 212, 0.18);
+    }
+
+    /* Home hero backdrop card for crisp readability over 3D car */
+    .hero-glass {
+      background: linear-gradient(155deg, rgba(8, 12, 20, 0.86) 0%, rgba(6, 9, 15, 0.78) 100%);
+      border: 1px solid rgba(34, 211, 238, 0.18);
+      box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Top bar nav underline */
+    .nav-link {
+      position: relative;
+      padding-bottom: 4px;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, #06b6d4, #67e8f9);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Glowing Start Journey / Next Section CTA */
+    .cta-ignite {
+      position: relative;
+      background: linear-gradient(135deg, #0891b2 0%, #06b6d4 52%, #22d3ee 100%);
+      color: #041017;
+      box-shadow:
+        0 0 28px rgba(6, 182, 212, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+    }
+    .cta-ignite:hover {
+      transform: translateY(-2px) scale(1.015);
+      box-shadow:
+        0 0 42px rgba(34, 211, 238, 0.68),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+    .cta-ignite:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    /* 3D Perspective Tilt Cards */
+    .tilt-card {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .tilt-card-inner {
+      transform: translateZ(18px);
+    }
+
+    /* Strict Page View Visibility (Immune to Tailwind display overrides) */
+    main .page-view {
+      display: none !important;
+      opacity: 0;
+    }
+    main #view-home.is-active {
+      display: flex !important;
+      opacity: 1;
+    }
+    main .page-view.is-active:not(#view-home) {
+      display: block !important;
+      opacity: 1;
+    }
+
+    /* 3D Domain Viewport Frame Reticles */
+    .stage-window {
+      position: relative;
+      border-bottom: 1px solid rgba(34, 211, 238, 0.18);
+      background: radial-gradient(circle at 50% 55%, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+    }
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: 2px solid #22d3ee;
+      outline-offset: 2px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #06080d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0891b2;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-100">
+
+  <!-- Shared High-FPS Three.js WebGL Stage -->
+  <div id="webgl-stage" aria-label="Interactive 3D Automotive Engineering Viewport"></div>
+  <div id="stage-scrim" class="stage-scrim"></div>
+
+  <!-- WebGL Context / Fallback Banner -->
+  <div id="webgl-fallback" class="hidden fixed inset-0 z-0 flex items-center justify-center bg-obsidian px-6 text-center">
+    <div class="max-w-md tech-surface rounded-xl p-8">
+      <p class="font-display text-lg text-cyan-300 mb-2">3D Viewport Unavailable</p>
+      <p class="text-sm text-slate-300">WebGL rendering is unavailable in this browser. All portfolio sections remain fully accessible.</p>
+    </div>
+  </div>
+
+  <!-- Top Bar Contract: 3 Zones (1-line Brand — Single-line Nav Links — 1 Primary Action) -->
+  <header id="main-header" class="fixed top-0 inset-x-0 z-40">
+    <div class="max-w-[1280px] mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-8">
+      <!-- Zone 1: Single-line Brand Wordmark -->
+      <a href="#home" data-route="home" class="font-display text-base sm:text-lg font-bold tracking-wider text-slate-100 hover:text-cyan-300 transition-colors whitespace-nowrap shrink-0">
+        VAIBHAV DHAWALE
+      </a>
+
+      <!-- Zone 2: Concise single-line navigation links -->
+      <nav aria-label="Primary Navigation" class="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-300">
+        <a href="#home" data-route="home" class="nav-link active hover:text-white transition-colors whitespace-nowrap shrink-0">Showroom</a>
+        <a href="#about" data-route="about" class="nav-link hover:text-white transition-colors whitespace-nowrap shrink-0">About</a>
+        <a href="#experience" data-route="experience" class="nav-link hover:text-white transition-colors whitespace-nowrap shrink-0">Experience</a>
+        <a href="#skills" data-route="skills" class="nav-link hover:text-white transition-colors whitespace-nowrap shrink-0">Skills</a>
+        <a href="#education" data-route="education" class="nav-link hover:text-white transition-colors whitespace-nowrap shrink-0">Education</a>
+        <a href="#contact" data-route="contact" class="nav-link hover:text-white transition-colors whitespace-nowrap shrink-0">Contact</a>
+      </nav>
+
+      <!-- Zone 3: 1 Primary Action + Mobile Menu Trigger -->
+      <div class="flex items-center gap-3 shrink-0">
+        <button id="header-cta-btn" type="button" data-route="contact" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold tracking-wide text-cyan-950 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-colors whitespace-nowrap shrink-0 min-h-[40px] cursor-pointer">
+          <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+          <span>Hire / Consult</span>
+        </button>
+
+        <button id="mobile-menu-toggle" type="button" aria-label="Toggle Navigation Menu" aria-expanded="false" class="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-lg border border-slate-700 bg-slate-900 text-slate-200 hover:border-cyan-400/50 hover:text-cyan-300 transition-colors cursor-pointer">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-slate-800 bg-[#070a11] px-5 py-4">
+      <nav aria-label="Mobile Navigation" class="grid grid-cols-2 gap-2 text-sm font-medium">
+        <a href="#home" data-route="home" class="mobile-nav-item px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800/70 whitespace-nowrap">Showroom</a>
+        <a href="#about" data-route="about" class="mobile-nav-item px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800/70 whitespace-nowrap">About</a>
+        <a href="#experience" data-route="experience" class="mobile-nav-item px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800/70 whitespace-nowrap">Experience</a>
+        <a href="#skills" data-route="skills" class="mobile-nav-item px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800/70 whitespace-nowrap">Skills</a>
+        <a href="#education" data-route="education" class="mobile-nav-item px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800/70 whitespace-nowrap">Education</a>
+        <a href="#contact" data-route="contact" class="mobile-nav-item px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800/70 whitespace-nowrap">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container (pointer-events-none so transparent 3D stages pass drag/orbit directly to WebGL canvas) -->
+  <main id="app-main" class="relative z-10 flex-1 pt-16 pointer-events-none">
+
+    <!-- ==================== 1. HOME / 3D SPORTS CAR SHOWROOM ==================== -->
+    <section id="view-home" class="page-view is-active min-h-[calc(100vh-4rem)] flex-col justify-between pointer-events-none">
+      <!-- Top Hero Overlay (Left-aligned, isolated card so center 3D car stays unobstructed) -->
+      <div class="max-w-[1280px] w-full mx-auto px-5 sm:px-8 pt-6 sm:pt-10">
+        <div class="max-w-xl hero-glass rounded-2xl p-6 sm:p-8 pointer-events-auto">
+          <p class="text-xs sm:text-sm font-mono text-cyan-300 tracking-wide mb-2">
+            Hingoli, Maharashtra, India · 9+ Years Experience
+          </p>
+          <h1 class="font-display font-bold text-2xl sm:text-4xl lg:text-[2.85rem] leading-[1.15] tracking-tight text-white mb-4" style="text-wrap: balance;">
+            Automobile Engineer &amp; Senior Motor Surveyor
+          </h1>
+          <p class="text-sm sm:text-base text-slate-300 leading-relaxed mb-6">
+            Precision automotive forensic inspection, structural chassis evaluation, and motor insurance claim auditing across Tier-1 insurers.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3.5">
+            <button id="start-journey-btn" type="button" class="cta-ignite inline-flex items-center gap-3 px-6 py-3.5 rounded-xl font-display font-bold text-sm tracking-wider uppercase cursor-pointer min-h-[44px] whitespace-nowrap shrink-0">
+              <span>Start Journey</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+            <button type="button" data-route="experience" class="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl border border-slate-700 bg-[#0b111c] hover:border-cyan-400/50 text-sm font-medium text-slate-200 hover:text-cyan-200 transition-colors cursor-pointer min-h-[44px] whitespace-nowrap shrink-0">
+              <span>Career Timeline</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. ABOUT PAGE (3D GEARS & PRECISION CALIPER) ==================== -->
+    <section id="view-about" class="page-view hidden">
+      <!-- Dedicated Interactive 3D Viewing Window -->
+      <div class="stage-window h-[250px] sm:h-[290px] w-full flex items-end justify-between max-w-[1160px] mx-auto px-5 sm:px-8 pb-4">
+        <div class="pointer-events-auto bg-[#070b12]/90 border border-slate-800 rounded-lg px-3.5 py-2">
+          <p class="text-xs font-mono text-cyan-300">3D Assembly: Meshed Spur Gears &amp; Precision Caliper Gauge</p>
+        </div>
+        <span class="hidden sm:inline-block text-xs font-mono text-slate-400 bg-[#070b12]/90 border border-slate-800 rounded-lg px-3 py-1.5">
+          Drag viewport to inspect 360°
+        </span>
+      </div>
+
+      <!-- Solid / Glassmorphic Isolated Content Deck -->
+      <div class="content-deck pointer-events-auto py-8 sm:py-10">
+        <div class="max-w-[1160px] mx-auto px-5 sm:px-8 space-y-8">
+
+          <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+            <div class="lg:col-span-7 tech-surface rounded-2xl p-7 sm:p-9 flex flex-col justify-between">
+              <div>
+                <p class="text-xs font-mono text-cyan-300 mb-2">01. Professional Profile</p>
+                <h2 class="font-display text-2xl sm:text-4xl font-bold text-white tracking-tight mb-5" style="text-wrap: balance;">
+                  Precision Forensic Inspection &amp; Claim Auditing
+                </h2>
+                <p class="text-slate-300 text-base leading-relaxed mb-5">
+                  Senior Inhouse Motor Surveyor and Automobile Engineer with over 9 years of technical expertise in automotive forensic inspection, chassis/structural damage analysis, accident reconstruction, and motor insurance claim auditing across Tier-1 insurers (IFFCO Tokio, HDFC ERGO, Royal Sundaram).
+                </p>
+                <p class="text-slate-300 text-base leading-relaxed">
+                  Demonstrated track record of conducting precision loss assessments, evaluating OEM parts pricing and labor standards, enforcing regulatory policy compliance, and optimizing claim settlement Turnaround Time (TAT) while mitigating fraudulent loss claims.
+                </p>
+              </div>
+
+              <div class="mt-7 pt-5 border-t border-slate-800 flex flex-wrap items-center gap-4 text-xs font-mono text-slate-400">
+                <span>Vaibhav Vinayakrao Dhawale</span>
+                <span aria-hidden="true">·</span>
+                <span>Hingoli, Maharashtra, India</span>
+                <span aria-hidden="true">·</span>
+                <span>Languages: English, Hindi, Marathi</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 tech-surface rounded-2xl p-7 sm:p-9 flex flex-col justify-between">
+              <div>
+                <p class="text-xs font-mono text-cyan-300 mb-2">Surveyor Mandate</p>
+                <h3 class="font-display text-lg sm:text-xl font-semibold text-white mb-5">
+                  Four Pillars of Motor Loss Assessment
+                </h3>
+
+                <div class="space-y-4">
+                  <div class="pb-3.5 border-b border-slate-800">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-semibold text-slate-100">Forensic Damage Correlation</span>
+                      <span class="text-xs font-mono text-cyan-300">01</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      Cause-and-effect impact reconstruction, staged collision anomaly detection, and structural chassis integrity checks.
+                    </p>
+                  </div>
+
+                  <div class="pb-3.5 border-b border-slate-800">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-semibold text-slate-100">OEM &amp; IRDAI Valuation</span>
+                      <span class="text-xs font-mono text-cyan-300">02</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      Spare part pricing audits, metal vs. composite material depreciation, labor hour allocation, and salvage valuation.
+                    </p>
+                  </div>
+
+                  <div class="pb-3.5 border-b border-slate-800">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-semibold text-slate-100">Dealer &amp; Workshop Synergy</span>
+                      <span class="text-xs font-mono text-cyan-300">03</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      Repair methodology negotiation with authorized bodyshops to uphold safety standards while reducing Turnaround Time (TAT).
+                    </p>
+                  </div>
+
+                  <div>
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-semibold text-slate-100">Diagnostics &amp; Electronics</span>
+                      <span class="text-xs font-mono text-cyan-300">04</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      OBD-II scanner evaluation, Diagnostic Trouble Code (DTC) review, and modern sensor assembly assessment.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Factual KPI Strip -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div class="tech-surface rounded-xl p-5 sm:p-6">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-white tabular-nums mb-1">9+ Years</p>
+              <p class="text-xs text-slate-400">Automobile Engineering &amp; Motor Surveying (2015–Present)</p>
+            </div>
+            <div class="tech-surface rounded-xl p-5 sm:p-6">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-cyan-300 tabular-nums mb-1">3 Insurers</p>
+              <p class="text-xs text-slate-400">IFFCO Tokio · HDFC ERGO · Royal Sundaram</p>
+            </div>
+            <div class="tech-surface rounded-xl p-5 sm:p-6">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-white tabular-nums mb-1">4 Roles</p>
+              <p class="text-xs text-slate-400">Bodyshop Advisor to Senior Inhouse Surveyor</p>
+            </div>
+            <div class="tech-surface rounded-xl p-5 sm:p-6">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-cyan-300 tabular-nums mb-1">B.E. Auto</p>
+              <p class="text-xs text-slate-400">North Maharashtra University &amp; MSBTE Diploma</p>
+            </div>
+          </div>
+
+          <!-- Explore Next Section Bar -->
+          <div class="pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+            <button type="button" data-route="home" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-cyan-400/50 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[42px]">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Back to 3D Showroom</span>
+            </button>
+            <button type="button" data-route="experience" class="cta-ignite inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-display font-bold text-xs sm:text-sm tracking-wide cursor-pointer min-h-[44px] whitespace-nowrap">
+              <span>Explore Experience Timeline</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. EXPERIENCE PAGE (3D INLINE-4 ENGINE PISTONS) ==================== -->
+    <section id="view-experience" class="page-view hidden">
+      <!-- Dedicated Interactive 3D Viewing Window -->
+      <div class="stage-window h-[250px] sm:h-[290px] w-full flex items-end justify-between max-w-[1160px] mx-auto px-5 sm:px-8 pb-4">
+        <div class="pointer-events-auto bg-[#070b12]/90 border border-slate-800 rounded-lg px-3.5 py-2 flex items-center gap-4">
+          <p class="text-xs font-mono text-cyan-300">3D Simulation: Running Inline-4 Crankshaft &amp; Piston Assembly</p>
+          <button id="engine-rpm-btn" type="button" class="px-2.5 py-1 rounded bg-cyan-500/20 border border-cyan-400/40 text-xs font-mono text-cyan-200 hover:bg-cyan-500/30 transition-colors cursor-pointer whitespace-nowrap">
+            RPM: Normal
+          </button>
+        </div>
+        <span class="hidden sm:inline-block text-xs font-mono text-slate-400 bg-[#070b12]/90 border border-slate-800 rounded-lg px-3 py-1.5">
+          Drag viewport to inspect 360°
+        </span>
+      </div>
+
+      <!-- Isolated Content Deck -->
+      <div class="content-deck pointer-events-auto py-8 sm:py-10">
+        <div class="max-w-[1160px] mx-auto px-5 sm:px-8 space-y-8">
+
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <p class="text-xs font-mono text-cyan-300 mb-2">02. Career Progression (Oct 2015 – Present)</p>
+              <h2 class="font-display text-2xl sm:text-4xl font-bold text-white tracking-tight" style="text-wrap: balance;">
+                Professional Experience Timeline
+              </h2>
+            </div>
+
+            <div class="inline-flex items-center gap-1 p-1 rounded-xl bg-[#0b101b] border border-slate-800 w-fit">
+              <button type="button" data-exp-filter="all" class="exp-filter-btn px-3.5 py-2 rounded-lg text-xs font-medium bg-cyan-500/20 text-cyan-200 border border-cyan-400/40 transition-colors cursor-pointer whitespace-nowrap">
+                All Roles (4)
+              </button>
+              <button type="button" data-exp-filter="insurer" class="exp-filter-btn px-3.5 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 border border-transparent transition-colors cursor-pointer whitespace-nowrap">
+                Motor Surveying (3)
+              </button>
+              <button type="button" data-exp-filter="bodyshop" class="exp-filter-btn px-3.5 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 border border-transparent transition-colors cursor-pointer whitespace-nowrap">
+                Bodyshop Ops (1)
+              </button>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-8 items-start">
+            <div id="timeline-rail" class="lg:col-span-5 space-y-3"></div>
+            <div id="experience-detail-panel" class="lg:col-span-7 tech-surface rounded-2xl p-7 sm:p-9"></div>
+          </div>
+
+          <!-- Explore Next Section Bar -->
+          <div class="pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+            <button type="button" data-route="about" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-cyan-400/50 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[42px]">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Previous: About</span>
+            </button>
+            <button type="button" data-route="skills" class="cta-ignite inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-display font-bold text-xs sm:text-sm tracking-wide cursor-pointer min-h-[44px] whitespace-nowrap">
+              <span>Next: Skills &amp; Technical Tools</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. SKILLS & TECH PAGE (3D OBD-II & AUDIT MATRIX) ==================== -->
+    <section id="view-skills" class="page-view hidden">
+      <!-- Dedicated Interactive 3D Viewing Window -->
+      <div class="stage-window h-[250px] sm:h-[290px] w-full flex items-end justify-between max-w-[1160px] mx-auto px-5 sm:px-8 pb-4">
+        <div class="pointer-events-auto bg-[#070b12]/90 border border-slate-800 rounded-lg px-3.5 py-2">
+          <p class="text-xs font-mono text-cyan-300">3D Instruments: OBD-II Diagnostic Scanner, Torque Wrench &amp; Claim Analytics Matrix</p>
+        </div>
+        <span class="hidden sm:inline-block text-xs font-mono text-slate-400 bg-[#070b12]/90 border border-slate-800 rounded-lg px-3 py-1.5">
+          Drag viewport to inspect 360°
+        </span>
+      </div>
+
+      <!-- Isolated Content Deck -->
+      <div class="content-deck pointer-events-auto py-8 sm:py-10">
+        <div class="max-w-[1160px] mx-auto px-5 sm:px-8 space-y-8">
+
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <p class="text-xs font-mono text-cyan-300 mb-2">03. Technical Expertise &amp; Core Competencies</p>
+              <h2 class="font-display text-2xl sm:text-4xl font-bold text-white tracking-tight" style="text-wrap: balance;">
+                Engineering, Forensics &amp; Claims Systems
+              </h2>
+            </div>
+
+            <div class="inline-flex flex-wrap items-center gap-1 p-1 rounded-xl bg-[#0b101b] border border-slate-800 w-fit">
+              <button type="button" data-skill-filter="all" class="skill-filter-btn px-3.5 py-2 rounded-lg text-xs font-medium bg-cyan-500/20 text-cyan-200 border border-cyan-400/40 transition-colors cursor-pointer whitespace-nowrap">
+                All Domains
+              </button>
+              <button type="button" data-skill-filter="forensic" class="skill-filter-btn px-3.5 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 border border-transparent transition-colors cursor-pointer whitespace-nowrap">
+                Forensic
+              </button>
+              <button type="button" data-skill-filter="auditing" class="skill-filter-btn px-3.5 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 border border-transparent transition-colors cursor-pointer whitespace-nowrap">
+                Claims &amp; IRDAI
+              </button>
+              <button type="button" data-skill-filter="workshop" class="skill-filter-btn px-3.5 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 border border-transparent transition-colors cursor-pointer whitespace-nowrap">
+                Workshop &amp; Tools
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 Interactive 3D Tilt Competency Cards -->
+          <div id="skills-grid" class="grid md:grid-cols-2 gap-6">
+            <article data-skill-cat="forensic" class="skill-card tilt-card tech-surface rounded-2xl p-7 flex flex-col justify-between">
+              <div class="tilt-card-inner">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                  <div>
+                    <p class="text-xs font-mono text-cyan-300 mb-1">Domain 01 · Structural &amp; Mechanical</p>
+                    <h3 class="font-display text-xl font-bold text-white">Forensic &amp; Engineering Analysis</h3>
+                  </div>
+                  <svg class="w-16 h-12 shrink-0 text-cyan-400" viewBox="0 0 80 56" fill="none" aria-hidden="true">
+                    <rect x="6" y="14" width="68" height="28" rx="4" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="3 2" />
+                    <path d="M16 28H64M24 18V38M56 18V38" stroke="currentColor" stroke-width="1.4" />
+                    <circle cx="24" cy="28" r="4" fill="#06080d" stroke="#22d3ee" stroke-width="1.6" />
+                    <circle cx="56" cy="28" r="4" fill="#06080d" stroke="#22d3ee" stroke-width="1.6" />
+                    <path d="M36 22L44 28L36 34" stroke="#67e8f9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+
+                <div class="space-y-3 border-t border-slate-800 pt-5">
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Automotive Accident Reconstruction</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Impact Kinematics</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Chassis &amp; Structural Alignment Inspection</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Frame Integrity</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Engine &amp; Transmission Loss Evaluation</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Powertrain</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Diagnostic Trouble Code (DTC) Review</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">OBD-II / Sensors</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Total Loss &amp; Salvage Valuation</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">CTL / Wreck</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article data-skill-cat="auditing" class="skill-card tilt-card tech-surface rounded-2xl p-7 flex flex-col justify-between">
+              <div class="tilt-card-inner">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                  <div>
+                    <p class="text-xs font-mono text-cyan-300 mb-1">Domain 02 · Regulatory &amp; Risk</p>
+                    <h3 class="font-display text-xl font-bold text-white">Insurance Claims &amp; Auditing</h3>
+                  </div>
+                  <svg class="w-16 h-12 shrink-0 text-cyan-400" viewBox="0 0 80 56" fill="none" aria-hidden="true">
+                    <path d="M8 44L22 30L34 36L50 18L62 24L72 12" stroke="#22d3ee" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                    <circle cx="50" cy="18" r="3.5" fill="#06080d" stroke="#67e8f9" stroke-width="1.5" />
+                    <circle cx="72" cy="12" r="3.5" fill="#22d3ee" />
+                    <path d="M8 48H72" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.2" />
+                  </svg>
+                </div>
+
+                <div class="space-y-3 border-t border-slate-800 pt-5">
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Motor Tariff Regulations</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Policy Scope</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">IRDAI Depreciation &amp; Salvage Guidelines</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Compliance</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Subrogation Investigation</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Liability Recovery</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Fraud Detection &amp; Risk Analytics</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Leakage Control</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Repair vs. Replacement Cost Optimization</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Loss Ratio</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article data-skill-cat="workshop" class="skill-card tilt-card tech-surface rounded-2xl p-7 flex flex-col justify-between">
+              <div class="tilt-card-inner">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                  <div>
+                    <p class="text-xs font-mono text-cyan-300 mb-1">Domain 03 · OEM &amp; Bodyshop</p>
+                    <h3 class="font-display text-xl font-bold text-white">Workshop &amp; Operations</h3>
+                  </div>
+                  <svg class="w-16 h-12 shrink-0 text-cyan-400" viewBox="0 0 80 56" fill="none" aria-hidden="true">
+                    <circle cx="32" cy="28" r="13" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 3" />
+                    <circle cx="32" cy="28" r="5" stroke="#67e8f9" stroke-width="1.5" />
+                    <circle cx="56" cy="20" r="8" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.3" />
+                    <circle cx="56" cy="20" r="2.5" fill="#22d3ee" />
+                  </svg>
+                </div>
+
+                <div class="space-y-3 border-t border-slate-800 pt-5">
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Bodyshop Workflow Management</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Bay Scheduling</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">OEM Parts Catalogues &amp; Pricing Standards</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Part Verification</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Paint &amp; Panel Restoration Standards</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Refinishing QC</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Multi-Brand Vehicle Maintenance</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">PV / CV / High-Value</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article data-skill-cat="workshop" class="skill-card tilt-card tech-surface rounded-2xl p-7 flex flex-col justify-between">
+              <div class="tilt-card-inner">
+                <div class="flex items-start justify-between gap-4 mb-5">
+                  <div>
+                    <p class="text-xs font-mono text-cyan-300 mb-1">Domain 04 · Diagnostics &amp; Analytics</p>
+                    <h3 class="font-display text-xl font-bold text-white">Technical &amp; Software Tools</h3>
+                  </div>
+                  <svg class="w-16 h-12 shrink-0 text-cyan-400" viewBox="0 0 80 56" fill="none" aria-hidden="true">
+                    <path d="M14 16H66L61 40H19L14 16Z" stroke="currentColor" stroke-width="1.4" />
+                    <line x1="25" y1="24" x2="25" y2="24.01" stroke="#67e8f9" stroke-width="3" stroke-linecap="round" />
+                    <line x1="35" y1="24" x2="35" y2="24.01" stroke="#67e8f9" stroke-width="3" stroke-linecap="round" />
+                    <line x1="45" y1="24" x2="45" y2="24.01" stroke="#67e8f9" stroke-width="3" stroke-linecap="round" />
+                    <line x1="55" y1="24" x2="55" y2="24.01" stroke="#67e8f9" stroke-width="3" stroke-linecap="round" />
+                    <line x1="30" y1="32" x2="50" y2="32" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" />
+                  </svg>
+                </div>
+
+                <div class="space-y-3 border-t border-slate-800 pt-5">
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Insurance Claims Management Portals</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">End-to-End Survey</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">Advanced MS Excel</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Data Analytics &amp; Claim Tracking</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">MS Office Suite</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Survey Reporting</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-slate-100 font-medium">OBD-II Diagnostic Scanners</span>
+                    <span class="text-xs font-mono text-slate-400 shrink-0">Fault Code Telemetry</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Interactive Surveyor Reference -->
+          <div class="tech-surface rounded-2xl p-7 sm:p-8">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
+              <div>
+                <p class="text-xs font-mono text-cyan-300 mb-1">Interactive Surveyor Reference</p>
+                <h3 class="font-display text-lg sm:text-xl font-bold text-white">
+                  Material Depreciation &amp; Loss Evaluation Estimator
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                  Inspect standard motor insurance material categories and vehicle age slabs used during spare part estimate auditing.
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <label for="calc-age" class="text-xs font-mono text-slate-300">Vehicle Age:</label>
+                <select id="calc-age" class="bg-[#080c14] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:border-cyan-400 cursor-pointer min-h-[40px]">
+                  <option value="0">Up to 6 months (0% Metal)</option>
+                  <option value="5">6 months – 1 year (5% Metal)</option>
+                  <option value="10">1 – 2 years (10% Metal)</option>
+                  <option value="15">2 – 3 years (15% Metal)</option>
+                  <option value="25" selected>3 – 4 years (25% Metal)</option>
+                  <option value="35">4 – 5 years (35% Metal)</option>
+                  <option value="40">5 – 10 years (40% Metal)</option>
+                  <option value="50">Over 10 years (50% Metal)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="rounded-xl bg-[#070b12] border border-slate-800 p-4">
+                <p class="text-xs text-slate-400 mb-1">Metallic Parts</p>
+                <p id="dep-metal" class="font-display text-2xl font-bold text-cyan-300 tabular-nums">25%</p>
+                <p class="text-xs text-slate-500 mt-1">Age-slab graded depreciation</p>
+              </div>
+              <div class="rounded-xl bg-[#070b12] border border-slate-800 p-4">
+                <p class="text-xs text-slate-400 mb-1">Rubber, Nylon &amp; Plastic</p>
+                <p class="font-display text-2xl font-bold text-white tabular-nums">50%</p>
+                <p class="text-xs text-slate-500 mt-1">Standard tariff rate (incl. tyres/tubes)</p>
+              </div>
+              <div class="rounded-xl bg-[#070b12] border border-slate-800 p-4">
+                <p class="text-xs text-slate-400 mb-1">Fibreglass Components</p>
+                <p class="font-display text-2xl font-bold text-white tabular-nums">30%</p>
+                <p class="text-xs text-slate-500 mt-1">Composite body assemblies</p>
+              </div>
+              <div class="rounded-xl bg-[#070b12] border border-slate-800 p-4">
+                <p class="text-xs text-slate-400 mb-1">Glass Components</p>
+                <p class="font-display text-2xl font-bold text-cyan-300 tabular-nums">0%</p>
+                <p class="text-xs text-slate-500 mt-1">Windshield &amp; window glazing</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Explore Next Section Bar -->
+          <div class="pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+            <button type="button" data-route="experience" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-cyan-400/50 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[42px]">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Previous: Experience</span>
+            </button>
+            <button type="button" data-route="education" class="cta-ignite inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-display font-bold text-xs sm:text-sm tracking-wide cursor-pointer min-h-[44px] whitespace-nowrap">
+              <span>Next: Education &amp; Engineering Projects</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. EDUCATION & PROJECTS PAGE (3D SOLAR PANEL & OILING PUMP) ==================== -->
+    <section id="view-education" class="page-view hidden">
+      <!-- Dedicated Interactive 3D Viewing Window -->
+      <div class="stage-window h-[250px] sm:h-[290px] w-full flex items-end justify-between max-w-[1160px] mx-auto px-5 sm:px-8 pb-4">
+        <div class="pointer-events-auto bg-[#070b12]/90 border border-slate-800 rounded-lg px-3.5 py-2">
+          <p class="text-xs font-mono text-cyan-300">3D Prototypes: Photovoltaic Solar Array &amp; Automatic Rotary Oiling Mechanism</p>
+        </div>
+        <span class="hidden sm:inline-block text-xs font-mono text-slate-400 bg-[#070b12]/90 border border-slate-800 rounded-lg px-3 py-1.5">
+          Drag viewport to inspect 360°
+        </span>
+      </div>
+
+      <!-- Isolated Content Deck -->
+      <div class="content-deck pointer-events-auto py-8 sm:py-10">
+        <div class="max-w-[1160px] mx-auto px-5 sm:px-8 space-y-8">
+
+          <div>
+            <p class="text-xs font-mono text-cyan-300 mb-2">04. Academic Foundation &amp; R&amp;D Prototypes</p>
+            <h2 class="font-display text-2xl sm:text-4xl font-bold text-white tracking-tight" style="text-wrap: balance;">
+              Education, Engineering Projects &amp; Training
+            </h2>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="tech-surface rounded-2xl p-7 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-4 text-xs font-mono text-cyan-300 mb-3">
+                  <span>Aug 2011 – Aug 2015</span>
+                  <span class="tabular-nums">Aggregate: 61.66%</span>
+                </div>
+                <h3 class="font-display text-xl font-bold text-white mb-2">
+                  Bachelor of Engineering (B.E.) in Automobile Engineering
+                </h3>
+                <p class="text-sm text-slate-300">North Maharashtra University</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                <span>Undergraduate Engineering Degree</span>
+                <span class="font-mono text-slate-300">4-Year Program</span>
+              </div>
+            </div>
+
+            <div class="tech-surface rounded-2xl p-7 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-4 text-xs font-mono text-cyan-300 mb-3">
+                  <span>Aug 2008 – Jul 2011</span>
+                  <span class="tabular-nums">Aggregate: 67.45%</span>
+                </div>
+                <h3 class="font-display text-xl font-bold text-white mb-2">
+                  Diploma in Automobile Engineering
+                </h3>
+                <p class="text-sm text-slate-300">Maharashtra State Board of Technical Education (MSBTE)</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                <span>Technical Diploma</span>
+                <span class="font-mono text-slate-300">3-Year Program</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-6">
+            <article class="tech-surface rounded-2xl p-7 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-4 mb-5">
+                  <div>
+                    <p class="text-xs font-mono text-cyan-300 mb-1">B.E. Degree Project</p>
+                    <h3 class="font-display text-xl font-bold text-white">
+                      Solar-Assisted Self-Energizing Vehicle
+                    </h3>
+                  </div>
+                  <i data-lucide="sun" class="w-6 h-6 text-cyan-400 shrink-0"></i>
+                </div>
+
+                <div class="rounded-xl bg-[#070b12] border border-slate-800 p-5 mb-5">
+                  <svg class="w-full h-32" viewBox="0 0 360 110" fill="none" aria-label="Solar-Assisted Self-Energizing Vehicle System Schematic">
+                    <rect x="82" y="16" width="140" height="16" rx="2" stroke="#22d3ee" stroke-width="1.5" fill="rgba(34,211,238,0.08)" />
+                    <line x1="117" y1="16" x2="117" y2="32" stroke="#22d3ee" stroke-opacity="0.5" />
+                    <line x1="152" y1="16" x2="152" y2="32" stroke="#22d3ee" stroke-opacity="0.5" />
+                    <line x1="187" y1="16" x2="187" y2="32" stroke="#22d3ee" stroke-opacity="0.5" />
+                    <path d="M40 72L68 44H218L268 58L306 64L312 78H40V72Z" stroke="#94a3b8" stroke-width="1.4" />
+                    <rect x="128" y="54" width="64" height="18" rx="3" stroke="#67e8f9" stroke-width="1.4" fill="rgba(6,182,212,0.12)" />
+                    <text x="160" y="66" text-anchor="middle" fill="#cffafe" font-size="8" font-family="JetBrains Mono">BATTERY</text>
+                    <path d="M152 32V54" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="3 2" />
+                    <circle cx="96" cy="82" r="14" stroke="#cbd5e1" stroke-width="1.8" fill="#06080d" />
+                    <circle cx="96" cy="82" r="5" stroke="#22d3ee" stroke-width="1.4" />
+                    <circle cx="256" cy="82" r="14" stroke="#cbd5e1" stroke-width="1.8" fill="#06080d" />
+                    <circle cx="256" cy="82" r="5" stroke="#22d3ee" stroke-width="1.4" />
+                  </svg>
+                </div>
+
+                <p class="text-sm text-slate-300 leading-relaxed">
+                  Engineered a prototype vehicle incorporating photovoltaic solar energy harvesting panels to supplement onboard battery storage, optimizing energy efficiency and extending vehicle range.
+                </p>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap items-center gap-3 text-xs font-mono text-slate-400">
+                <span>Photovoltaic Harvesting</span>
+                <span aria-hidden="true">·</span>
+                <span>Onboard Storage</span>
+                <span aria-hidden="true">·</span>
+                <span>Range Optimization</span>
+              </div>
+            </article>
+
+            <article class="tech-surface rounded-2xl p-7 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-4 mb-5">
+                  <div>
+                    <p class="text-xs font-mono text-cyan-300 mb-1">Diploma Project</p>
+                    <h3 class="font-display text-xl font-bold text-white">
+                      Automatic Oiling Unit for Self-Propelled Mechanical Engine
+                    </h3>
+                  </div>
+                  <i data-lucide="droplets" class="w-6 h-6 text-cyan-400 shrink-0"></i>
+                </div>
+
+                <div class="rounded-xl bg-[#070b12] border border-slate-800 p-5 mb-5">
+                  <svg class="w-full h-32" viewBox="0 0 360 110" fill="none" aria-label="Automatic Positive-Displacement Oiling Unit Schematic">
+                    <rect x="34" y="24" width="66" height="56" rx="4" stroke="#22d3ee" stroke-width="1.5" fill="rgba(34,211,238,0.08)" />
+                    <path d="M36 52H98" stroke="#67e8f9" stroke-opacity="0.5" stroke-dasharray="4 2" />
+                    <text x="67" y="70" text-anchor="middle" fill="#cffafe" font-size="8" font-family="JetBrains Mono">RESERVOIR</text>
+                    <circle cx="164" cy="52" r="18" stroke="#94a3b8" stroke-width="1.5" />
+                    <circle cx="164" cy="52" r="7" stroke="#22d3ee" stroke-width="1.5" />
+                    <path d="M100 52H146" stroke="#22d3ee" stroke-width="1.6" />
+                    <path d="M182 52H238" stroke="#22d3ee" stroke-width="1.6" />
+                    <path d="M238 28V76" stroke="#67e8f9" stroke-width="1.6" />
+                    <path d="M238 28H278M238 52H278M238 76H278" stroke="#22d3ee" stroke-width="1.4" stroke-dasharray="3 2" />
+                    <rect x="278" y="20" width="48" height="16" rx="2" stroke="#cbd5e1" stroke-width="1.2" />
+                    <rect x="278" y="44" width="48" height="16" rx="2" stroke="#cbd5e1" stroke-width="1.2" />
+                    <rect x="278" y="68" width="48" height="16" rx="2" stroke="#cbd5e1" stroke-width="1.2" />
+                    <text x="302" y="31" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="JetBrains Mono">CAM</text>
+                    <text x="302" y="55" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="JetBrains Mono">CRANK</text>
+                    <text x="302" y="79" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="JetBrains Mono">BEARING</text>
+                  </svg>
+                </div>
+
+                <p class="text-sm text-slate-300 leading-relaxed">
+                  Designed an automated positive-displacement lubrication mechanism to deliver precise oil flow to critical engine friction points, reducing mechanical wear and thermal stress.
+                </p>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap items-center gap-3 text-xs font-mono text-slate-400">
+                <span>Positive-Displacement Pump</span>
+                <span aria-hidden="true">·</span>
+                <span>Friction Control</span>
+                <span aria-hidden="true">·</span>
+                <span>Thermal Reduction</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="tech-surface rounded-2xl p-7 sm:p-8">
+            <p class="text-xs font-mono text-cyan-300 mb-2">Industrial Training &amp; Leadership</p>
+            <div class="grid md:grid-cols-2 gap-8 mt-4">
+              <div class="pb-5 md:pb-0 md:pr-6 border-b md:border-b-0 md:border-r border-slate-800">
+                <h3 class="font-display text-lg font-bold text-white mb-2">MITCON Consultancy</h3>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                  Completed professional industrial training at MITCON Consultancy focusing on energy and industrial auditing, evaluating plant operational efficiency and systematic technical reporting.
+                </p>
+              </div>
+              <div>
+                <h3 class="font-display text-lg font-bold text-white mb-2">National Cadet Corps (NCC)</h3>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                  Active participant in the National Cadet Corps (NCC), building field discipline, team leadership, and structured crisis-response coordination.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Explore Next Section Bar -->
+          <div class="pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+            <button type="button" data-route="skills" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-cyan-400/50 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[42px]">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Previous: Skills &amp; Tools</span>
+            </button>
+            <button type="button" data-route="contact" class="cta-ignite inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-display font-bold text-xs sm:text-sm tracking-wide cursor-pointer min-h-[44px] whitespace-nowrap">
+              <span>Next: Contact &amp; Direct Channels</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 6. CONTACT PAGE (3D COMMUNICATION GLOBE & NODE) ==================== -->
+    <section id="view-contact" class="page-view hidden">
+      <!-- Dedicated Interactive 3D Viewing Window -->
+      <div class="stage-window h-[250px] sm:h-[290px] w-full flex items-end justify-between max-w-[1160px] mx-auto px-5 sm:px-8 pb-4">
+        <div class="pointer-events-auto bg-[#070b12]/90 border border-slate-800 rounded-lg px-3.5 py-2">
+          <p class="text-xs font-mono text-cyan-300">3D Network: Geodesic Communication Globe &amp; Orbital Relay Node</p>
+        </div>
+        <span class="hidden sm:inline-block text-xs font-mono text-slate-400 bg-[#070b12]/90 border border-slate-800 rounded-lg px-3 py-1.5">
+          Drag viewport to inspect 360°
+        </span>
+      </div>
+
+      <!-- Isolated Content Deck -->
+      <div class="content-deck pointer-events-auto py-8 sm:py-10">
+        <div class="max-w-[1160px] mx-auto px-5 sm:px-8 space-y-8">
+
+          <div>
+            <p class="text-xs font-mono text-cyan-300 mb-2">05. Direct Channels</p>
+            <h2 class="font-display text-2xl sm:text-4xl font-bold text-white tracking-tight" style="text-wrap: balance;">
+              Connect with Vaibhav Dhawale
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 mt-3 max-w-2xl">
+              Available for Senior Motor Surveyor leadership, automotive forensic consultancy, and technical claim auditing inquiries.
+            </p>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+            <div class="lg:col-span-5 tech-surface rounded-2xl p-7 sm:p-9 flex flex-col justify-between space-y-6">
+              <div class="space-y-6">
+                <div>
+                  <p class="text-xs font-mono text-slate-400 mb-1">Phone</p>
+                  <div class="flex items-center justify-between gap-3">
+                    <a href="tel:+919765954579" class="font-display text-lg font-semibold text-white hover:text-cyan-300 transition-colors tabular-nums">
+                      +91 9765954579
+                    </a>
+                    <button type="button" data-copy="+91 9765954579" class="copy-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 hover:border-cyan-400/50 text-xs text-slate-300 hover:text-cyan-200 transition-colors cursor-pointer whitespace-nowrap">
+                      <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                      <span>Copy</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="pt-5 border-t border-slate-800">
+                  <p class="text-xs font-mono text-slate-400 mb-1">Email</p>
+                  <div class="flex items-center justify-between gap-3">
+                    <a href="mailto:dhawale.vaibhav80@gmail.com" class="text-sm sm:text-base font-medium text-cyan-300 hover:text-cyan-200 transition-colors break-all">
+                      dhawale.vaibhav80@gmail.com
+                    </a>
+                    <button type="button" data-copy="dhawale.vaibhav80@gmail.com" class="copy-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 hover:border-cyan-400/50 text-xs text-slate-300 hover:text-cyan-200 transition-colors cursor-pointer whitespace-nowrap shrink-0">
+                      <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                      <span>Copy</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="pt-5 border-t border-slate-800">
+                  <p class="text-xs font-mono text-slate-400 mb-1">Base Location</p>
+                  <p class="text-base font-medium text-slate-100">Hingoli, Maharashtra, India</p>
+                </div>
+
+                <div class="pt-5 border-t border-slate-800">
+                  <p class="text-xs font-mono text-slate-400 mb-1">Professional Profiles &amp; Languages</p>
+                  <p class="text-sm text-slate-300 mb-2">LinkedIn: Profile link provided upon request</p>
+                  <p class="text-xs font-mono text-slate-400">Languages: English · Hindi · Marathi</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 tech-surface rounded-2xl p-7 sm:p-9">
+              <p class="text-xs font-mono text-cyan-300 mb-2">Direct Message Composer</p>
+              <h3 class="font-display text-xl font-bold text-white mb-6">Send an Inquiry</h3>
+
+              <form id="contact-form" class="space-y-5">
+                <div class="grid sm:grid-cols-2 gap-5">
+                  <div>
+                    <label for="inq-name" class="block text-xs font-medium text-slate-300 mb-2">Your Name</label>
+                    <input id="inq-name" type="text" required placeholder="Recruiter or Organization Name" class="w-full rounded-xl bg-[#070b12] border border-slate-700 px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-cyan-400 transition-colors" />
+                  </div>
+                  <div>
+                    <label for="inq-subject" class="block text-xs font-medium text-slate-300 mb-2">Subject</label>
+                    <input id="inq-subject" type="text" required value="Senior Motor Surveyor Opportunity" class="w-full rounded-xl bg-[#070b12] border border-slate-700 px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-cyan-400 transition-colors" />
+                  </div>
+                </div>
+
+                <div>
+                  <label for="inq-message" class="block text-xs font-medium text-slate-300 mb-2">Message</label>
+                  <textarea id="inq-message" rows="5" required placeholder="Share role details, survey consultation scope, or interview schedule..." class="w-full rounded-xl bg-[#070b12] border border-slate-700 px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-cyan-400 transition-colors resize-none"></textarea>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+                  <span id="form-feedback" class="text-xs font-mono text-cyan-300"></span>
+                  <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-cyan-950 font-semibold text-sm transition-colors cursor-pointer min-h-[44px] whitespace-nowrap">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>Compose Email</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Explore Next Section Bar -->
+          <div class="pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+            <button type="button" data-route="education" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-cyan-400/50 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[42px]">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Previous: Education &amp; Projects</span>
+            </button>
+            <button type="button" data-route="home" class="cta-ignite inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-display font-bold text-xs sm:text-sm tracking-wide cursor-pointer min-h-[44px] whitespace-nowrap">
+              <span>Return to 3D Car Showroom</span>
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Solid Minimal Footer -->
+  <footer id="main-footer" class="hidden relative z-20 py-6">
+    <div class="max-w-[1160px] mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      <span>Vaibhav Vinayakrao Dhawale · Hingoli, Maharashtra, India</span>
+      <div class="flex items-center gap-5">
+        <a href="#home" data-route="home" class="hover:text-cyan-300 transition-colors">3D Showroom</a>
+        <a href="mailto:dhawale.vaibhav80@gmail.com" class="hover:text-cyan-300 transition-colors">dhawale.vaibhav80@gmail.com</a>
+        <a href="tel:+919765954579" class="hover:text-cyan-300 transition-colors tabular-nums">+91 9765954579</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-6 right-6 z-50 hidden items-center gap-2 px-4 py-3 rounded-xl bg-[#0d1624] border border-cyan-400/40 text-xs font-medium text-cyan-100 shadow-lg">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400"></i>
+    <span id="toast-msg">Copied to clipboard</span>
+  </div>
+
+  <!-- Three.js Multi-Scene Engine & Application Logic -->
+  <script type="module">
+    import * as THREE from 'https://esm.sh/three@0.170.0';
+    import { OrbitControls } from 'https://esm.sh/three@0.170.0/examples/jsm/controls/OrbitControls.js';
+    import { RoomEnvironment } from 'https://esm.sh/three@0.170.0/examples/jsm/environments/RoomEnvironment.js';
+
+    // =========================================================================
+    // 1. FACTUAL RESUME DATA (EXPERIENCE TIMELINE)
+    // =========================================================================
+    const EXPERIENCE_DATA = [
+      {
+        id: 'iffco',
+        category: 'insurer',
+        role: 'Senior Executive (Inhouse Surveyor)',
+        company: 'IFFCO TOKIO General Insurance Company',
+        period: 'Oct 2022 – Present',
+        duration: 'Current Role',
+        focus: 'Forensic Inspection · OEM Estimate Auditing · Fraud Mitigation · TAT Optimization',
+        bullets: [
+          'Perform rigorous forensic physical inspections and technical damage assessments on private, commercial, and high-value vehicle categories.',
+          'Audit repair estimates against OEM service manuals, evaluating structural integrity, chassis distortion, and specialized electronics/sensor assemblies.',
+          'Analyze spare part pricing structures, metal vs. composite material depreciation, and labor hour allocations to ensure fair and accurate claim settlement.',
+          'Investigate anomalies, staged collision indicators, and mechanical discrepancies to detect fraudulent loss claims and minimize leakage.',
+          'Collaborate with authorized dealer networks and independent workshops to streamline repair workflows and reduce average claim Turnaround Time (TAT).'
+        ]
+      },
+      {
+        id: 'hdfc',
+        category: 'insurer',
+        role: 'Senior Executive (Inhouse Surveyor)',
+        company: 'HDFC ERGO General Insurance Company',
+        period: 'Aug 2019 – Jun 2022',
+        duration: '2 yrs 11 mos',
+        focus: 'End-to-End Motor Survey · Total Loss & Salvage · Technical Negotiation',
+        bullets: [
+          'Executed end-to-end motor survey management, preliminary loss assessments, and re-inspections for complex accidental and total-loss cases.',
+          'Negotiated technical repair methodologies with bodyshop managers, balancing cost-efficiency with uncompromising safety and structural standards.',
+          'Generated comprehensive technical survey reports detailing cause-and-effect damage correlations, liability parameters, and salvage valuations.'
+        ]
+      },
+      {
+        id: 'royal',
+        category: 'insurer',
+        role: 'Inhouse Motor Engineer',
+        company: 'Royal Sundaram General Insurance Company',
+        period: 'Feb 2017 – Aug 2019',
+        duration: '2 yrs 7 mos',
+        focus: 'Engine & Suspension Diagnostics · Franchise Audits · Catastrophe Claims',
+        bullets: [
+          'Conducted detailed physical and digital diagnostic evaluations of engine mechanicals, suspension systems, and body panel damage.',
+          'Coordinated closely with multi-brand franchise workshops to audit repair progress, verify replacement part authenticity, and manage customer expectations.',
+          'Assisted senior loss assessors in complex catastrophe and major collision claim investigations.'
+        ]
+      },
+      {
+        id: 'kothari',
+        category: 'bodyshop',
+        role: 'Bodyshop Advisor',
+        company: 'Kothari Autolink Pvt. Ltd. (Crystal Honda)',
+        period: 'Oct 2015 – Jan 2017',
+        duration: '1 yr 4 mos',
+        focus: 'Front-End Bodyshop Ops · OEM Estimating · Post-Repair Quality Control',
+        bullets: [
+          'Managed front-end bodyshop operations, serving as the technical liaison between vehicle owners, workshop technicians, and insurance surveyors.',
+          'Formulated precise initial repair estimates using OEM parts databases and oversaw mechanical, denting, and painting bay scheduling.',
+          'Monitored quality control post-repair, ensuring adherence to Honda factory specifications and safety standards prior to vehicle delivery.'
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 2. PROCEDURAL WEB AUDIO ENGINE-REV SYNTHESIZER
+    // =========================================================================
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function playEngineRevSound() {
+      if (!soundEnabled) return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+        const duration = 1.6;
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const osc3 = audioCtx.createOscillator();
+        osc1.type = 'sawtooth';
+        osc2.type = 'triangle';
+        osc3.type = 'sawtooth';
+
+        osc1.frequency.setValueAtTime(52, now);
+        osc1.frequency.exponentialRampToValueAtTime(195, now + 0.65);
+        osc1.frequency.exponentialRampToValueAtTime(132, now + 0.98);
+        osc1.frequency.exponentialRampToValueAtTime(220, now + 1.45);
+
+        osc2.frequency.setValueAtTime(26, now);
+        osc2.frequency.exponentialRampToValueAtTime(97.5, now + 0.65);
+        osc2.frequency.exponentialRampToValueAtTime(66, now + 0.98);
+        osc2.frequency.exponentialRampToValueAtTime(110, now + 1.45);
+
+        osc3.frequency.setValueAtTime(104, now);
+        osc3.frequency.exponentialRampToValueAtTime(390, now + 0.65);
+        osc3.frequency.exponentialRampToValueAtTime(264, now + 0.98);
+        osc3.frequency.exponentialRampToValueAtTime(440, now + 1.45);
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.Q.value = 3.2;
+        filter.frequency.setValueAtTime(220, now);
+        filter.frequency.exponentialRampToValueAtTime(1600, now + 0.68);
+        filter.frequency.exponentialRampToValueAtTime(420, now + duration);
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.16, now + 0.12);
+        gain.gain.setValueAtTime(0.18, now + 0.7);
+        gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        osc3.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc3.start(now);
+        osc1.stop(now + duration);
+        osc2.stop(now + duration);
+        osc3.stop(now + duration);
+      } catch (_) {}
+    }
+
+    // =========================================================================
+    // 3. THREE.JS MULTI-DOMAIN 3D ENGINE (6 UNIQUE SECTION WORLDS)
+    // =========================================================================
+    const container = document.getElementById('webgl-stage');
+    const fallbackEl = document.getElementById('webgl-fallback');
+    let renderer, scene, camera, controls, pmremGenerator;
+    let floorGroup;
+    let isSoftwareGl = false;
+    let autoOrbit = true;
+    let isJourneyAnimating = false;
+    let wheelRevSpeed = 0;
+    let engineRpmBoost = false;
+    let frameId = 0;
+    let activeRoute = 'home';
+
+    // Shared PBR Material Library
+    let MAT = {};
+
+    // Section Model Registry & Kinematic Handles
+    const sectionModels = {};
+    let wireframeGroup, metallicGroup, chassisGroup;
+    let wheels = [];
+    let gearRefs = [];
+    let caliperJaw = null;
+    let crankAssembly = null;
+    let pistonRefs = [];
+    let chartBars = [];
+    let solarPanelPivot = null;
+    let oilPumpRotor = null;
+    let globeAssembly = null;
+    let orbitPackets = [];
+    let particles, particlePositions, particleSpeeds;
+
+    // Zero-GC math helpers
+    const _clock = new THREE.Clock();
+    const _desiredCamPos = new THREE.Vector3(4.6, 1.85, 5.1);
+    const _desiredLookAt = new THREE.Vector3(0, 0.55, 0);
+    let cameraTransitionActive = false;
+
+    function detectSoftwareWebGL() {
+      try {
+        const probeCanvas = document.createElement('canvas');
+        const gl = probeCanvas.getContext('webgl2') || probeCanvas.getContext('webgl');
+        if (!gl) return true;
+        const ext = gl.getExtension('WEBGL_debug_renderer_info');
+        const param = ext ? ext.UNMASKED_RENDERER_WEBGL : gl.RENDERER;
+        const gpu = String(gl.getParameter(param));
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+        return /SwiftShader|llvmpipe|softpipe|Software|Basic Render/i.test(gpu);
+      } catch (_) {
+        return true;
+      }
+    }
+
+    function initMaterials() {
+      MAT = {
+        paint: new THREE.MeshPhysicalMaterial({
+          color: 0x162234,
+          metalness: 0.84,
+          roughness: 0.24,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.08,
+          envMapIntensity: 1.35
+        }),
+        steel: new THREE.MeshStandardMaterial({
+          color: 0xcbd5e1,
+          metalness: 0.92,
+          roughness: 0.22
+        }),
+        gunmetal: new THREE.MeshStandardMaterial({
+          color: 0x334155,
+          metalness: 0.82,
+          roughness: 0.36
+        }),
+        carbon: new THREE.MeshStandardMaterial({
+          color: 0x0d1117,
+          metalness: 0.25,
+          roughness: 0.68
+        }),
+        glass: new THREE.MeshPhysicalMaterial({
+          color: 0x0b1f33,
+          metalness: 0.1,
+          roughness: 0.06,
+          clearcoat: 1.0,
+          transparent: true,
+          opacity: isSoftwareGl ? 0.52 : 0.62,
+          depthWrite: false
+        }),
+        tire: new THREE.MeshStandardMaterial({
+          color: 0x111419,
+          metalness: 0.05,
+          roughness: 0.88
+        }),
+        cyanEmissive: new THREE.MeshStandardMaterial({
+          color: 0x22d3ee,
+          emissive: 0x06b6d4,
+          emissiveIntensity: 2.0,
+          roughness: 0.22
+        }),
+        amberEmissive: new THREE.MeshStandardMaterial({
+          color: 0xf59e0b,
+          emissive: 0xd97706,
+          emissiveIntensity: 1.9,
+          roughness: 0.25
+        }),
+        redEmissive: new THREE.MeshStandardMaterial({
+          color: 0xef4444,
+          emissive: 0xdc2626,
+          emissiveIntensity: 1.9,
+          roughness: 0.22
+        }),
+        wireCyan: new THREE.LineBasicMaterial({
+          color: 0x22d3ee,
+          transparent: true,
+          opacity: 0.68
+        }),
+        wireSlate: new THREE.LineBasicMaterial({
+          color: 0x64748b,
+          transparent: true,
+          opacity: 0.45
+        })
+      };
+    }
+
+    function createShowroomGridTexture(maxAnisotropy) {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#070b12';
+      ctx.fillRect(0, 0, 512, 512);
+      ctx.strokeStyle = 'rgba(34, 211, 238, 0.14)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 512; i += 64) {
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 512); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(512, i); ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(16, 16);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = maxAnisotropy;
+      return tex;
+    }
+
+    function createSolarCellTexture(maxAnisotropy) {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#091830';
+      ctx.fillRect(0, 0, 512, 256);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+      ctx.lineWidth = 2;
+      for (let x = 0; x <= 512; x += 64) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 256); ctx.stroke();
+      }
+      for (let y = 0; y <= 256; y += 32) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = maxAnisotropy;
+      return tex;
+    }
+
+    function createScreenWaveformTexture(maxAnisotropy) {
+      const c = document.createElement('canvas');
+      c.width = 256;
+      c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#04121b';
+      ctx.fillRect(0, 0, 256, 256);
+      ctx.strokeStyle = 'rgba(34, 211, 238, 0.2)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 256; i += 32) {
+        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(256, i); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 256); ctx.stroke();
+      }
+      ctx.strokeStyle = '#22d3ee';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let x = 0; x <= 256; x += 8) {
+        const y = 128 + Math.sin(x * 0.08) * 42 * Math.cos(x * 0.025);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.fillStyle = '#a5f3fc';
+      ctx.font = 'bold 18px monospace';
+      ctx.fillText('OBD-II // DTC OK', 18, 34);
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = maxAnisotropy;
+      return tex;
+    }
+
+    // --- MODEL 1: HOME — 3D GT SPORTS CAR ---
+    function buildSportsCarModel() {
+      const root = new THREE.Group();
+      wireframeGroup = new THREE.Group();
+      metallicGroup = new THREE.Group();
+      chassisGroup = new THREE.Group();
+
+      const bodyShape = new THREE.Shape();
+      bodyShape.moveTo(-2.22, 0.22);
+      bodyShape.lineTo(-2.14, 0.42);
+      bodyShape.quadraticCurveTo(-1.85, 0.62, -1.12, 0.72);
+      bodyShape.lineTo(-0.42, 1.12);
+      bodyShape.quadraticCurveTo(0.28, 1.24, 1.05, 1.02);
+      bodyShape.lineTo(1.96, 0.84);
+      bodyShape.lineTo(2.16, 0.68);
+      bodyShape.lineTo(2.10, 0.24);
+      bodyShape.lineTo(1.78, 0.22);
+      bodyShape.absarc(1.36, 0.36, 0.41, -0.35, Math.PI + 0.35, false);
+      bodyShape.lineTo(-0.95, 0.22);
+      bodyShape.absarc(-1.36, 0.36, 0.41, -0.35, Math.PI + 0.35, false);
+      bodyShape.lineTo(-2.22, 0.22);
+
+      const bodyGeo = new THREE.ExtrudeGeometry(bodyShape, {
+        depth: 1.66,
+        bevelEnabled: true,
+        bevelThickness: 0.12,
+        bevelSize: 0.08,
+        bevelSegments: 4,
+        curveSegments: 24
+      });
+      bodyGeo.translate(0, 0, -0.83);
+      const bodyMesh = new THREE.Mesh(bodyGeo, MAT.paint);
+      bodyMesh.castShadow = true;
+      bodyMesh.receiveShadow = true;
+      metallicGroup.add(bodyMesh);
+      wireframeGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(bodyGeo, 14), MAT.wireCyan));
+
+      const canopyShape = new THREE.Shape();
+      canopyShape.moveTo(-1.02, 0.74);
+      canopyShape.lineTo(-0.40, 1.14);
+      canopyShape.quadraticCurveTo(0.28, 1.26, 1.00, 1.03);
+      canopyShape.lineTo(1.52, 0.86);
+      canopyShape.lineTo(0.95, 0.78);
+      canopyShape.lineTo(-1.02, 0.74);
+      const canopyGeo = new THREE.ExtrudeGeometry(canopyShape, {
+        depth: 1.28, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.04, bevelSegments: 3
+      });
+      canopyGeo.translate(0, 0, -0.64);
+      metallicGroup.add(new THREE.Mesh(canopyGeo, MAT.glass));
+      wireframeGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(canopyGeo, 18), MAT.wireCyan));
+
+      const splitter = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.05, 1.88), MAT.carbon);
+      splitter.position.set(-2.08, 0.18, 0);
+      metallicGroup.add(splitter);
+
+      const diffuser = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 1.72), MAT.carbon);
+      diffuser.position.set(2.02, 0.22, 0);
+      metallicGroup.add(diffuser);
+
+      const wingBlade = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.035, 1.78), MAT.carbon);
+      wingBlade.position.set(2.04, 1.07, 0);
+      wingBlade.rotation.z = -0.14;
+      metallicGroup.add(wingBlade);
+
+      [-0.46, 0.46].forEach((zPos) => {
+        const pylon = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.24, 0.03), MAT.steel);
+        pylon.position.set(1.98, 0.94, zPos);
+        pylon.rotation.z = -0.18;
+        metallicGroup.add(pylon);
+      });
+
+      [-0.64, 0.64].forEach((zPos) => {
+        const headlight = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.04, 0.22), MAT.cyanEmissive);
+        headlight.position.set(-2.02, 0.49, zPos);
+        headlight.rotation.z = 0.25;
+        root.add(headlight);
+      });
+
+      const tailBar = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.045, 1.56), MAT.redEmissive);
+      tailBar.position.set(2.15, 0.66, 0);
+      root.add(tailBar);
+
+      const tireGeo = new THREE.CylinderGeometry(0.36, 0.36, 0.26, 28);
+      tireGeo.rotateX(Math.PI / 2);
+      const rimGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.27, 20);
+      rimGeo.rotateX(Math.PI / 2);
+
+      [
+        { x: -1.36, z: -0.84, front: true },
+        { x: -1.36, z: 0.84, front: true },
+        { x: 1.36, z: -0.84, front: false },
+        { x: 1.36, z: 0.84, front: false }
+      ].forEach((wp) => {
+        const wGroup = new THREE.Group();
+        wGroup.position.set(wp.x, 0.36, wp.z);
+        wGroup.add(new THREE.Mesh(tireGeo, MAT.tire));
+        wGroup.add(new THREE.Mesh(rimGeo, MAT.steel));
+        for (let s = 0; s < 5; s++) {
+          const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.44, 0.28), MAT.steel);
+          spoke.rotation.z = (s * Math.PI) / 5;
+          wGroup.add(spoke);
+        }
+        const caliper = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 0.09), MAT.cyanEmissive);
+        caliper.position.set(wp.front ? 0.13 : -0.13, 0.06, wp.z > 0 ? 0.08 : -0.08);
+        wGroup.add(caliper);
+        wGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(tireGeo, 20), MAT.wireCyan));
+        wheels.push(wGroup);
+        root.add(wGroup);
+      });
+
+      const railEdges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.4, 0.08, 0.78)), MAT.wireCyan);
+      railEdges.position.set(0, 0.34, 0);
+      chassisGroup.add(railEdges);
+
+      root.add(metallicGroup, wireframeGroup, chassisGroup);
+      return root;
+    }
+
+    // --- MODEL 2: ABOUT — 3D ROTATING MECHANICAL GEARS & PRECISION CALIPER ---
+    function createSpurGearMesh(teeth, innerR, outerR, thickness, material) {
+      const shape = new THREE.Shape();
+      const step = (Math.PI * 2) / teeth;
+      for (let i = 0; i < teeth; i++) {
+        const a0 = i * step;
+        const a1 = a0 + step * 0.22;
+        const a2 = a0 + step * 0.32;
+        const a3 = a0 + step * 0.68;
+        const a4 = a0 + step * 0.78;
+        if (i === 0) shape.moveTo(Math.cos(a0) * innerR, Math.sin(a0) * innerR);
+        else shape.lineTo(Math.cos(a0) * innerR, Math.sin(a0) * innerR);
+        shape.lineTo(Math.cos(a1) * innerR, Math.sin(a1) * innerR);
+        shape.lineTo(Math.cos(a2) * outerR, Math.sin(a2) * outerR);
+        shape.lineTo(Math.cos(a3) * outerR, Math.sin(a3) * outerR);
+        shape.lineTo(Math.cos(a4) * innerR, Math.sin(a4) * innerR);
+      }
+      shape.closePath();
+
+      const hole = new THREE.Path();
+      hole.absarc(0, 0, innerR * 0.35, 0, Math.PI * 2, true);
+      shape.holes.push(hole);
+
+      const geo = new THREE.ExtrudeGeometry(shape, {
+        depth: thickness, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.015, bevelSegments: 2
+      });
+      geo.translate(0, 0, -thickness / 2);
+
+      const group = new THREE.Group();
+      const mesh = new THREE.Mesh(geo, material);
+      group.add(mesh);
+      group.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 22), MAT.wireCyan));
+      return group;
+    }
+
+    function buildGearsAndCaliperModel() {
+      const root = new THREE.Group();
+
+      // 3 Synchronized Spur Gears
+      const g1 = createSpurGearMesh(18, 0.72, 0.88, 0.16, MAT.gunmetal);
+      g1.position.set(-0.9, 0.35, 0);
+      const g2 = createSpurGearMesh(12, 0.48, 0.62, 0.16, MAT.steel);
+      g2.position.set(0.45, 0.35, 0);
+      const g3 = createSpurGearMesh(10, 0.38, 0.50, 0.16, MAT.paint);
+      g3.position.set(1.42, 0.78, 0);
+
+      gearRefs = [
+        { mesh: g1, ratio: 1.0 },
+        { mesh: g2, ratio: -1.5 },
+        { mesh: g3, ratio: 1.8 }
+      ];
+      root.add(g1, g2, g3);
+
+      // Precision Vernier Caliper Assembly
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.16, 0.08), MAT.steel);
+      beam.position.set(0, -0.78, 0.25);
+      root.add(beam);
+
+      const fixedJaw = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.72, 0.1), MAT.gunmetal);
+      fixedJaw.position.set(-1.45, -1.06, 0.25);
+      root.add(fixedJaw);
+
+      caliperJaw = new THREE.Group();
+      caliperJaw.position.set(0.15, -0.78, 0.26);
+      const sliderBlock = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.24, 0.12), MAT.paint);
+      const moveJaw = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.72, 0.1), MAT.steel);
+      moveJaw.position.set(-0.14, -0.28, 0);
+      const laserTip = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.1, 0.12), MAT.cyanEmissive);
+      laserTip.position.set(0, 0.08, 0);
+      caliperJaw.add(sliderBlock, moveJaw, laserTip);
+      root.add(caliperJaw);
+
+      return root;
+    }
+
+    // --- MODEL 3: EXPERIENCE — 3D RUNNING INLINE-4 ENGINE & PISTON ASSEMBLY ---
+    function buildEnginePistonModel() {
+      const root = new THREE.Group();
+      crankAssembly = new THREE.Group();
+      pistonRefs = [];
+
+      // Translucent Engine Block Frame
+      const blockGeo = new THREE.BoxGeometry(3.1, 1.35, 1.15);
+      const blockWire = new THREE.LineSegments(new THREE.EdgesGeometry(blockGeo), MAT.wireCyan);
+      blockWire.position.set(0, 0.3, 0);
+      root.add(blockWire);
+
+      // Crankshaft Main Axis
+      const shaftGeo = new THREE.CylinderGeometry(0.08, 0.08, 3.25, 16);
+      shaftGeo.rotateZ(Math.PI / 2);
+      crankAssembly.add(new THREE.Mesh(shaftGeo, MAT.steel));
+      crankAssembly.position.set(0, -0.45, 0);
+
+      // Flywheel
+      const flywheel = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.12, 28), MAT.gunmetal);
+      flywheel.rotation.z = Math.PI / 2;
+      flywheel.position.set(1.62, 0, 0);
+      crankAssembly.add(flywheel);
+
+      const xOffsets = [-1.05, -0.35, 0.35, 1.05];
+      const phases = [0, Math.PI, Math.PI, 0]; // 1-3-4-2 Inline-4 crank throws
+
+      const sleeveGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.95, 20, 1, true);
+      const pistonGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.32, 20);
+      const rodGeo = new THREE.BoxGeometry(0.06, 0.68, 0.06);
+
+      xOffsets.forEach((xPos, idx) => {
+        // Cylinder Sleeve
+        const sleeve = new THREE.Mesh(sleeveGeo, MAT.glass);
+        sleeve.position.set(xPos, 0.52, 0);
+        root.add(sleeve);
+        root.add(new THREE.LineSegments(new THREE.EdgesGeometry(sleeveGeo, 24), MAT.wireSlate).translateX(xPos).translateY(0.52));
+
+        // Crankpin Throw Visual
+        const throwArm = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.28, 0.14), MAT.steel);
+        const phase = phases[idx];
+        throwArm.position.set(xPos, Math.sin(phase) * 0.11, Math.cos(phase) * 0.11);
+        crankAssembly.add(throwArm);
+
+        // Piston Head + Glow Ring
+        const pGroup = new THREE.Group();
+        pGroup.position.set(xPos, 0.4, 0);
+        pGroup.add(new THREE.Mesh(pistonGeo, MAT.steel));
+        const flashRing = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.018, 8, 24), MAT.cyanEmissive);
+        flashRing.rotation.x = Math.PI / 2;
+        flashRing.position.y = 0.17;
+        pGroup.add(flashRing);
+        root.add(pGroup);
+
+        // Connecting Rod
+        const rod = new THREE.Mesh(rodGeo, MAT.gunmetal);
+        rod.position.set(xPos, 0, 0);
+        root.add(rod);
+
+        pistonRefs.push({ piston: pGroup, rod, flashRing, phase, xPos });
+      });
+
+      root.add(crankAssembly);
+      return root;
+    }
+
+    // --- MODEL 4: SKILLS — 3D OBD-II SCANNER, WRENCH & ANALYTICAL BAR MATRIX ---
+    function buildDiagnosticToolsModel(maxAniso) {
+      const root = new THREE.Group();
+
+      // 1. OBD-II Handheld Diagnostic Scanner
+      const scanner = new THREE.Group();
+      scanner.position.set(-1.35, 0.1, 0.15);
+      scanner.rotation.set(0.15, 0.35, -0.08);
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.92, 1.48, 0.24), MAT.carbon);
+      scanner.add(body);
+      scanner.add(new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry), MAT.wireCyan));
+
+      const screen = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.72, 0.72),
+        new THREE.MeshBasicMaterial({ map: createScreenWaveformTexture(maxAniso) })
+      );
+      screen.position.set(0, 0.24, 0.125);
+      scanner.add(screen);
+
+      // Keypad buttons
+      for (let r = 0; r < 2; r++) {
+        for (let c = 0; c < 3; c++) {
+          const btn = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.1, 0.05), MAT.cyanEmissive);
+          btn.position.set(-0.22 + c * 0.22, -0.32 - r * 0.18, 0.12);
+          scanner.add(btn);
+        }
+      }
+      root.add(scanner);
+
+      // 2. 3D Analytical Claim Data Bar Chart Matrix
+      const chartGroup = new THREE.Group();
+      chartGroup.position.set(0.35, -0.5, 0);
+      const basePlate = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.08, 1.1), MAT.gunmetal);
+      chartGroup.add(basePlate);
+      chartGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(basePlate.geometry), MAT.wireCyan));
+
+      chartBars = [];
+      const barHeights = [0.65, 1.15, 0.9, 1.45, 1.25];
+      barHeights.forEach((h, i) => {
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(0.22, h, 0.22), i % 2 === 0 ? MAT.cyanEmissive : MAT.steel);
+        bar.position.set(-0.65 + i * 0.32, h / 2 + 0.04, 0);
+        chartGroup.add(bar);
+        chartBars.push({ mesh: bar, baseH: h, phase: i * 0.9 });
+      });
+      root.add(chartGroup);
+
+      // 3. Floating Precision Wrench
+      const wrench = new THREE.Group();
+      wrench.position.set(1.75, 0.35, -0.2);
+      wrench.rotation.z = 0.45;
+      const handle = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.5, 0.07), MAT.steel);
+      const head = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.06, 10, 20, Math.PI * 1.45), MAT.steel);
+      head.position.y = 0.82;
+      head.rotation.z = 0.6;
+      wrench.add(handle, head);
+      wrench.add(new THREE.LineSegments(new THREE.EdgesGeometry(handle.geometry), MAT.wireCyan));
+      root.add(wrench);
+
+      return root;
+    }
+
+    // --- MODEL 5: EDUCATION — 3D SOLAR PANEL ARRAY & AUTOMATIC OILING UNIT ---
+    function buildEducationProjectsModel(maxAniso) {
+      const root = new THREE.Group();
+
+      // Left: Photovoltaic Solar Panel Array
+      const solarBase = new THREE.Group();
+      solarBase.position.set(-1.15, -0.45, 0);
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.7, 16), MAT.gunmetal);
+      mast.position.y = 0.35;
+      solarBase.add(mast);
+
+      solarPanelPivot = new THREE.Group();
+      solarPanelPivot.position.set(0, 0.72, 0);
+      solarPanelPivot.rotation.x = 0.42;
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.06, 1.05), MAT.steel);
+      const cells = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.65, 0.95),
+        new THREE.MeshStandardMaterial({ map: createSolarCellTexture(maxAniso), roughness: 0.25, metalness: 0.4 })
+      );
+      cells.rotation.x = -Math.PI / 2;
+      cells.position.y = 0.035;
+      solarPanelPivot.add(frame, cells);
+      solarPanelPivot.add(new THREE.LineSegments(new THREE.EdgesGeometry(frame.geometry), MAT.wireCyan));
+      solarBase.add(solarPanelPivot);
+
+      // Battery Storage Module
+      const battery = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.35, 0.48), MAT.paint);
+      battery.position.set(0, 0.18, 0.62);
+      solarBase.add(battery);
+      solarBase.add(new THREE.LineSegments(new THREE.EdgesGeometry(battery.geometry), MAT.wireCyan).translateY(0.18).translateZ(0.62));
+      root.add(solarBase);
+
+      // Right: Automatic Positive-Displacement Oiling Unit
+      const oilUnit = new THREE.Group();
+      oilUnit.position.set(1.25, -0.1, 0);
+
+      // Reservoir Cylinder
+      const reservoir = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.95, 24), MAT.glass);
+      reservoir.position.set(-0.55, 0.1, 0);
+      oilUnit.add(reservoir);
+      oilUnit.add(new THREE.LineSegments(new THREE.EdgesGeometry(reservoir.geometry, 24), MAT.wireCyan).translateX(-0.55).translateY(0.1));
+
+      // Oil Fluid Core
+      const oilFluid = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.62, 20), MAT.amberEmissive);
+      oilFluid.position.set(-0.55, -0.05, 0);
+      oilUnit.add(oilFluid);
+
+      // Rotary Pump Housing + Rotor
+      const pumpHousing = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.25, 24), MAT.gunmetal);
+      pumpHousing.rotation.x = Math.PI / 2;
+      pumpHousing.position.set(0.35, 0.1, 0);
+      oilUnit.add(pumpHousing);
+
+      oilPumpRotor = createSpurGearMesh(8, 0.24, 0.34, 0.28, MAT.amberEmissive);
+      oilPumpRotor.position.set(0.35, 0.1, 0);
+      oilUnit.add(oilPumpRotor);
+
+      // Feed Line
+      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.9, 10), MAT.steel);
+      pipe.rotation.z = Math.PI / 2;
+      pipe.position.set(-0.1, 0.1, 0);
+      oilUnit.add(pipe);
+
+      root.add(oilUnit);
+      return root;
+    }
+
+    // --- MODEL 6: CONTACT — 3D COMMUNICATION GLOBE & ORBITAL RELAY NODE ---
+    function buildContactGlobeModel() {
+      const root = new THREE.Group();
+      globeAssembly = new THREE.Group();
+      orbitPackets = [];
+
+      const coreGeo = new THREE.IcosahedronGeometry(0.92, 2);
+      const coreMesh = new THREE.Mesh(coreGeo, MAT.paint);
+      const wireMesh = new THREE.LineSegments(new THREE.WireframeGeometry(coreGeo), MAT.wireCyan);
+      globeAssembly.add(coreMesh, wireMesh);
+
+      // 3 Tilted Orbital Communication Rings
+      const ringConfigs = [
+        { rx: 1.05, ry: 0.25, radius: 1.32, speed: 1.2 },
+        { rx: -0.75, ry: 0.85, radius: 1.48, speed: -0.95 },
+        { rx: 0.35, ry: -1.1, radius: 1.62, speed: 0.75 }
+      ];
+
+      ringConfigs.forEach((rc) => {
+        const ringPivot = new THREE.Group();
+        ringPivot.rotation.set(rc.rx, rc.ry, 0);
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(rc.radius, 0.014, 8, 64), MAT.cyanEmissive);
+        ringPivot.add(ring);
+
+        const packet = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), MAT.steel);
+        packet.position.set(rc.radius, 0, 0);
+        ringPivot.add(packet);
+
+        orbitPackets.push({ pivot: ringPivot, speed: rc.speed });
+        globeAssembly.add(ringPivot);
+      });
+
+      // Signal Beacon Pin
+      const pin = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.28, 12), MAT.cyanEmissive);
+      pin.position.set(0.62, 0.62, 0.52);
+      pin.lookAt(1.8, 1.8, 1.5);
+      pin.rotateX(Math.PI / 2);
+      globeAssembly.add(pin);
+
+      root.add(globeAssembly);
+      return root;
+    }
+
+    // =========================================================================
+    // 4. SHOWROOM INITIALIZATION & ANIMATION LOOP
+    // =========================================================================
+    function initThreeShowroom() {
+      try {
+        isSoftwareGl = detectSoftwareWebGL();
+        if (!isSoftwareGl) {
+          document.body.classList.add('gpu-blur');
+        }
+
+        renderer = new THREE.WebGLRenderer({
+          antialias: !isSoftwareGl,
+          powerPreference: 'high-performance',
+          alpha: false
+        });
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.15;
+        renderer.setPixelRatio(isSoftwareGl ? 1 : Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = !isSoftwareGl;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        renderer.domElement.addEventListener('webglcontextlost', (e) => {
+          e.preventDefault();
+          cancelAnimationFrame(frameId);
+          clearTimeout(frameId);
+        });
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x06080d);
+        scene.fog = new THREE.FogExp2(0x06080d, 0.042);
+
+        pmremGenerator = new THREE.PMREMGenerator(renderer);
+        scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+        pmremGenerator.dispose();
+
+        camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.copy(_desiredCamPos);
+
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = !isSoftwareGl;
+        controls.dampingFactor = 0.06;
+        controls.enablePan = false;
+        controls.enableZoom = false; // Keep page scrolling smooth without accidental zoom traps!
+        controls.maxPolarAngle = Math.PI * 0.49;
+        controls.minPolarAngle = 0.18;
+        controls.target.copy(_desiredLookAt);
+
+        controls.addEventListener('start', () => {
+          cameraTransitionActive = false;
+        });
+
+        // 3-Point Studio Lighting Rig
+        scene.add(new THREE.HemisphereLight(0x93c5fd, 0x0f172a, 0.8));
+
+        const keyLight = new THREE.DirectionalLight(0xfff1e0, 2.2);
+        keyLight.position.set(5, 8, 5);
+        if (!isSoftwareGl) {
+          keyLight.castShadow = true;
+          keyLight.shadow.mapSize.width = 1024;
+          keyLight.shadow.mapSize.height = 1024;
+        }
+        scene.add(keyLight);
+
+        const rimLight = new THREE.DirectionalLight(0x22d3ee, 1.9);
+        rimLight.position.set(-5, 3.5, -5);
+        scene.add(rimLight);
+
+        initMaterials();
+        const maxAniso = renderer.capabilities.getMaxAnisotropy();
+
+        // Showroom Floor (Shown on Home Showroom)
+        floorGroup = new THREE.Group();
+        const floor = new THREE.Mesh(
+          new THREE.PlaneGeometry(46, 46),
+          new THREE.MeshStandardMaterial({ map: createShowroomGridTexture(maxAniso), roughness: 0.55, metalness: 0.35 })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        floorGroup.add(floor);
+
+        const ring1 = new THREE.Mesh(
+          new THREE.RingGeometry(2.65, 2.71, 80).rotateX(-Math.PI / 2),
+          new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.55, side: THREE.DoubleSide })
+        );
+        ring1.position.y = 0.02;
+        floorGroup.add(ring1);
+        scene.add(floorGroup);
+
+        // Build all 6 Section-Specific 3D Models
+        sectionModels.home = buildSportsCarModel();
+        sectionModels.about = buildGearsAndCaliperModel();
+        sectionModels.experience = buildEnginePistonModel();
+        sectionModels.skills = buildDiagnosticToolsModel(maxAniso);
+        sectionModels.education = buildEducationProjectsModel(maxAniso);
+        sectionModels.contact = buildContactGlobeModel();
+
+        Object.entries(sectionModels).forEach(([key, grp]) => {
+          grp.visible = key === 'home';
+          scene.add(grp);
+        });
+
+        // Airflow / Ambient Particle Field
+        const pCount = 240;
+        const pGeo = new THREE.BufferGeometry();
+        particlePositions = new Float32Array(pCount * 3);
+        particleSpeeds = new Float32Array(pCount);
+        for (let i = 0; i < pCount; i++) {
+          particlePositions[i * 3] = (Math.random() - 0.5) * 18;
+          particlePositions[i * 3 + 1] = 0.15 + Math.random() * 3.0;
+          particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 12;
+          particleSpeeds[i] = 0.6 + Math.random() * 1.5;
+        }
+        pGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        particles = new THREE.Points(
+          pGeo,
+          new THREE.PointsMaterial({ color: 0x67e8f9, size: 0.045, transparent: true, opacity: 0.6, sizeAttenuation: true })
+        );
+        particles.frustumCulled = false;
+        scene.add(particles);
+
+        if (!isSoftwareGl) {
+          renderer.compile(scene, camera);
+        }
+
+        window.addEventListener('resize', onWindowResize);
+        tick();
+      } catch (err) {
+        console.warn('WebGL fallback activated:', err);
+        container.classList.add('hidden');
+        fallbackEl.classList.remove('hidden');
+      }
+    }
+
+    function switch3DSceneForRoute(route) {
+      Object.entries(sectionModels).forEach(([key, grp]) => {
+        grp.visible = key === route;
+      });
+      if (floorGroup) {
+        floorGroup.visible = route === 'home';
+      }
+
+      if (route === 'home') {
+        _desiredCamPos.set(4.6, 1.85, 5.1);
+        _desiredLookAt.set(0, 0.55, 0);
+      } else {
+        // Frame each domain 3D model cleanly in the upper transparent 3D viewport window
+        _desiredCamPos.set(0.35, 1.15, 5.15);
+        _desiredLookAt.set(0, -0.78, 0);
+      }
+      cameraTransitionActive = true;
+    }
+
+    function onWindowResize() {
+      if (!renderer || !camera) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(isSoftwareGl ? 1 : Math.min(window.devicePixelRatio, 2));
+    }
+
+    function afterDraw(cb) {
+      const gl = renderer.getContext();
+      if (!gl || typeof gl.fenceSync !== 'function') {
+        frameId = window.setTimeout(cb, 80);
+        return;
+      }
+      const sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+      gl.flush();
+      const poll = () => {
+        const state = sync && gl.getSyncParameter(sync, gl.SYNC_STATUS);
+        if (state === gl.UNSIGNALED) {
+          frameId = window.setTimeout(poll, 5);
+        } else {
+          if (sync) gl.deleteSync(sync);
+          frameId = window.setTimeout(cb, 80);
+        }
+      };
+      frameId = window.setTimeout(poll, 5);
+    }
+
+    function tick() {
+      const dt = Math.min(_clock.getDelta(), 0.05);
+      const elapsed = _clock.elapsedTime;
+
+      // Active Section Kinematics
+      if (activeRoute === 'home' && sectionModels.home) {
+        if (autoOrbit && !isJourneyAnimating) {
+          sectionModels.home.rotation.y += dt * 0.24;
+        }
+        if (wheelRevSpeed > 0.01) {
+          for (let i = 0; i < wheels.length; i++) wheels[i].rotation.z += dt * wheelRevSpeed;
+          wheelRevSpeed = THREE.MathUtils.damp(wheelRevSpeed, 0, 2.2, dt);
+        }
+      } else if (activeRoute === 'about' && sectionModels.about) {
+        for (let i = 0; i < gearRefs.length; i++) {
+          gearRefs[i].mesh.rotation.z += dt * 0.9 * gearRefs[i].ratio;
+        }
+        if (caliperJaw) {
+          caliperJaw.position.x = -0.15 + Math.sin(elapsed * 1.4) * 0.55;
+        }
+      } else if (activeRoute === 'experience' && crankAssembly) {
+        const speed = engineRpmBoost ? 14.0 : 5.5;
+        const theta = elapsed * speed;
+        crankAssembly.rotation.x = theta;
+        const r = 0.22;
+        const L = 0.68;
+        for (let i = 0; i < pistonRefs.length; i++) {
+          const p = pistonRefs[i];
+          const a = theta + p.phase;
+          const crankY = -0.45 + Math.sin(a) * r;
+          const crankZ = Math.cos(a) * r;
+          const pistonY = crankY + Math.sqrt(Math.max(0.01, L * L - crankZ * crankZ));
+          p.piston.position.y = pistonY;
+          p.rod.position.set(p.xPos, (crankY + pistonY) * 0.5, crankZ * 0.5);
+          p.rod.rotation.x = Math.atan2(crankZ, pistonY - crankY);
+          // Ignition glow flash near Top Dead Center
+          p.flashRing.visible = Math.sin(a) > 0.85;
+        }
+      } else if (activeRoute === 'skills') {
+        for (let i = 0; i < chartBars.length; i++) {
+          const b = chartBars[i];
+          const scaleY = 0.78 + Math.sin(elapsed * 2.2 + b.phase) * 0.25;
+          b.mesh.scale.y = scaleY;
+          b.mesh.position.y = (b.baseH * scaleY) * 0.5 + 0.04;
+        }
+        if (sectionModels.skills) {
+          sectionModels.skills.rotation.y = Math.sin(elapsed * 0.45) * 0.22;
+        }
+      } else if (activeRoute === 'education') {
+        if (solarPanelPivot) {
+          solarPanelPivot.rotation.x = 0.35 + Math.sin(elapsed * 0.9) * 0.16;
+        }
+        if (oilPumpRotor) {
+          oilPumpRotor.rotation.z -= dt * 2.8;
+        }
+      } else if (activeRoute === 'contact' && globeAssembly) {
+        globeAssembly.rotation.y += dt * 0.28;
+        for (let i = 0; i < orbitPackets.length; i++) {
+          orbitPackets[i].pivot.rotation.z += dt * orbitPackets[i].speed;
+        }
+      }
+
+      // Airflow Particles
+      if (particles) {
+        const posAttr = particles.geometry.attributes.position;
+        const boost = isJourneyAnimating ? 18.0 : 1.0;
+        for (let i = 0; i < particleSpeeds.length; i++) {
+          let x = posAttr.getX(i) + dt * particleSpeeds[i] * boost;
+          if (x > 9) x = -9;
+          posAttr.setX(i, x);
+        }
+        posAttr.needsUpdate = true;
+      }
+
+      // Smooth Camera Framing Transitions
+      if (!isJourneyAnimating && controls) {
+        if (cameraTransitionActive) {
+          camera.position.x = THREE.MathUtils.damp(camera.position.x, _desiredCamPos.x, 4.5, dt);
+          camera.position.y = THREE.MathUtils.damp(camera.position.y, _desiredCamPos.y, 4.5, dt);
+          camera.position.z = THREE.MathUtils.damp(camera.position.z, _desiredCamPos.z, 4.5, dt);
+          controls.target.x = THREE.MathUtils.damp(controls.target.x, _desiredLookAt.x, 4.5, dt);
+          controls.target.y = THREE.MathUtils.damp(controls.target.y, _desiredLookAt.y, 4.5, dt);
+          controls.target.z = THREE.MathUtils.damp(controls.target.z, _desiredLookAt.z, 4.5, dt);
+
+          if (camera.position.distanceTo(_desiredCamPos) < 0.02 && controls.target.distanceTo(_desiredLookAt) < 0.02) {
+            cameraTransitionActive = false;
+          }
+        }
+        controls.update();
+      }
+
+      renderer.render(scene, camera);
+
+      if (isSoftwareGl) {
+        afterDraw(tick);
+      } else {
+        frameId = requestAnimationFrame(tick);
+      }
+    }
+
+    // =========================================================================
+    // 5. ROUTING & START JOURNEY SEQUENCE
+    // =========================================================================
+    const scrimEl = document.getElementById('stage-scrim');
+    const footerEl = document.getElementById('main-footer');
+
+    function navigateTo(route, skipAnimation = false) {
+      const validRoutes = ['home', 'about', 'experience', 'skills', 'education', 'contact'];
+      if (!validRoutes.includes(route)) route = 'home';
+
+      activeRoute = route;
+      if (window.location.hash !== '#' + route) {
+        try {
+          history.replaceState(null, '', '#' + route);
+        } catch (_) {
+          window.location.hash = route;
+        }
+      }
+
+      document.querySelectorAll('.nav-link').forEach((link) => {
+        link.classList.toggle('active', link.dataset.route === route);
+        link.classList.toggle('text-white', link.dataset.route === route);
+      });
+
+      const isHome = route === 'home';
+      scrimEl.classList.toggle('dashboard-mode', !isHome);
+      footerEl.classList.toggle('hidden', isHome);
+      switch3DSceneForRoute(route);
+
+      if (window.gsap) {
+        gsap.killTweensOf('.page-view');
+      }
+      document.querySelectorAll('.page-view').forEach((sec) => {
+        sec.classList.remove('is-active');
+        sec.classList.add('hidden');
+        sec.style.opacity = '';
+        sec.style.transform = '';
+      });
+
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      window.scrollTo(0, 0);
+
+      const targetView = document.getElementById('view-' + route);
+      if (targetView) {
+        targetView.classList.remove('hidden');
+        targetView.classList.add('is-active');
+        if (!skipAnimation && window.gsap) {
+          gsap.fromTo(targetView, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power3.out', clearProps: 'transform' });
+        } else {
+          targetView.style.opacity = '1';
+        }
+      }
+
+      const drawer = document.getElementById('mobile-nav-drawer');
+      const toggleBtn = document.getElementById('mobile-menu-toggle');
+      if (drawer && !drawer.classList.contains('hidden')) {
+        drawer.classList.add('hidden');
+        toggleBtn?.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    function triggerStartJourney() {
+      if (isJourneyAnimating) return;
+      isJourneyAnimating = true;
+      wheelRevSpeed = 38;
+      playEngineRevSound();
+
+      if (!camera || !window.gsap) {
+        isJourneyAnimating = false;
+        navigateTo('about');
+        return;
+      }
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isJourneyAnimating = false;
+          camera.fov = 42;
+          camera.updateProjectionMatrix();
+          navigateTo('about');
+        }
+      });
+
+      tl.to(camera, {
+        fov: 58,
+        duration: 0.72,
+        ease: 'power2.in',
+        onUpdate: () => camera.updateProjectionMatrix()
+      }, 0);
+
+      tl.to(camera.position, {
+        x: 0.2,
+        y: 1.05,
+        z: 0.45,
+        duration: 0.82,
+        ease: 'power2.inOut',
+        onUpdate: () => camera.lookAt(-1.8, 0.7, 0)
+      }, 0);
+
+      tl.to('#view-home', {
+        opacity: 0,
+        duration: 0.42,
+        ease: 'power2.out'
+      }, 0.40);
+    }
+
+    // =========================================================================
+    // 6. INTERACTIVE TIMELINE, TILT CARDS, CALCULATOR & CONTACT
+    // =========================================================================
+    let selectedExpId = 'iffco';
+    let expFilter = 'all';
+
+    function renderExperienceTimeline() {
+      const rail = document.getElementById('timeline-rail');
+      const detail = document.getElementById('experience-detail-panel');
+      if (!rail || !detail) return;
+
+      const filtered = EXPERIENCE_DATA.filter((item) => expFilter === 'all' || item.category === expFilter);
+      if (!filtered.some((i) => i.id === selectedExpId) && filtered.length > 0) {
+        selectedExpId = filtered[0].id;
+      }
+
+      rail.innerHTML = filtered.map((item) => {
+        const active = item.id === selectedExpId;
+        return `
+          <button type="button" data-exp-id="${item.id}" class="exp-node w-full text-left rounded-xl p-5 transition-all cursor-pointer ${
+            active
+              ? 'bg-[#101c2d] border border-cyan-400/50 shadow-[0_0_24px_rgba(6,182,212,0.14)]'
+              : 'tech-surface hover:border-cyan-400/30'
+          }">
+            <div class="flex items-center justify-between gap-3 text-xs font-mono mb-1.5">
+              <span class="${active ? 'text-cyan-300' : 'text-slate-400'}">${item.period}</span>
+              <span class="text-slate-500 tabular-nums">${item.duration}</span>
+            </div>
+            <p class="font-display text-sm sm:text-base font-bold text-white mb-0.5">${item.company}</p>
+            <p class="text-xs text-slate-300">${item.role}</p>
+          </button>
+        `;
+      }).join('');
+
+      const activeItem = filtered.find((i) => i.id === selectedExpId) || filtered[0];
+      if (activeItem) {
+        detail.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-cyan-300 mb-3">
+            <span>${activeItem.period}</span>
+            <span>${activeItem.duration}</span>
+          </div>
+          <h3 class="font-display text-xl sm:text-2xl font-bold text-white mb-1">${activeItem.role}</h3>
+          <p class="text-base font-medium text-slate-200 mb-4">${activeItem.company}</p>
+          <p class="text-xs font-mono text-slate-400 pb-5 mb-6 border-b border-slate-800">${activeItem.focus}</p>
+          <ul class="space-y-4">
+            ${activeItem.bullets.map((b) => `
+              <li class="flex items-start gap-3 text-sm text-slate-300 leading-relaxed">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                <span>${b}</span>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+      }
+
+      rail.querySelectorAll('.exp-node').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedExpId = btn.dataset.expId;
+          renderExperienceTimeline();
+          if (window.gsap) {
+            gsap.fromTo(detail, { opacity: 0.4, x: 10 }, { opacity: 1, x: 0, duration: 0.28, ease: 'power2.out' });
+          }
+        });
+      });
+    }
+
+    function setup3DTiltCards() {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion) return;
+
+      document.querySelectorAll('.tilt-card').forEach((card) => {
+        card.addEventListener('pointermove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const px = (e.clientX - rect.left) / rect.width - 0.5;
+          const py = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.transform = `perspective(900px) rotateX(${(-py * 6).toFixed(2)}deg) rotateY(${(px * 6).toFixed(2)}deg)`;
+        });
+        card.addEventListener('pointerleave', () => {
+          card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+        });
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      if (!toast || !msgEl) return;
+      msgEl.textContent = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2600);
+    }
+
+    function initApp() {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+
+      initThreeShowroom();
+      renderExperienceTimeline();
+      setup3DTiltCards();
+
+      document.querySelectorAll('[data-route]').forEach((el) => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          navigateTo(el.dataset.route);
+        });
+      });
+
+      document.getElementById('start-journey-btn')?.addEventListener('click', triggerStartJourney);
+
+      const mobileToggle = document.getElementById('mobile-menu-toggle');
+      const mobileDrawer = document.getElementById('mobile-nav-drawer');
+      mobileToggle?.addEventListener('click', () => {
+        const isHidden = mobileDrawer.classList.toggle('hidden');
+        mobileToggle.setAttribute('aria-expanded', String(!isHidden));
+      });
+
+      const rpmBtn = document.getElementById('engine-rpm-btn');
+      rpmBtn?.addEventListener('click', () => {
+        engineRpmBoost = !engineRpmBoost;
+        rpmBtn.textContent = engineRpmBoost ? 'RPM: High Rev' : 'RPM: Normal';
+      });
+
+      document.querySelectorAll('.exp-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          expFilter = btn.dataset.expFilter;
+          document.querySelectorAll('.exp-filter-btn').forEach((b) => {
+            const active = b === btn;
+            b.classList.toggle('bg-cyan-500/20', active);
+            b.classList.toggle('text-cyan-200', active);
+            b.classList.toggle('border-cyan-400/40', active);
+            b.classList.toggle('text-slate-400', !active);
+            b.classList.toggle('border-transparent', !active);
+          });
+          renderExperienceTimeline();
+        });
+      });
+
+      document.querySelectorAll('.skill-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const filter = btn.dataset.skillFilter;
+          document.querySelectorAll('.skill-filter-btn').forEach((b) => {
+            const active = b === btn;
+            b.classList.toggle('bg-cyan-500/20', active);
+            b.classList.toggle('text-cyan-200', active);
+            b.classList.toggle('border-cyan-400/40', active);
+            b.classList.toggle('text-slate-400', !active);
+            b.classList.toggle('border-transparent', !active);
+          });
+          document.querySelectorAll('.skill-card').forEach((card) => {
+            const show = filter === 'all' || card.dataset.skillCat === filter;
+            card.classList.toggle('hidden', !show);
+          });
+        });
+      });
+
+      const calcAge = document.getElementById('calc-age');
+      const depMetal = document.getElementById('dep-metal');
+      calcAge?.addEventListener('change', () => {
+        if (depMetal) depMetal.textContent = calcAge.value + '%';
+      });
+
+      document.querySelectorAll('.copy-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const val = btn.dataset.copy;
+          try {
+            await navigator.clipboard.writeText(val);
+            showToast(`Copied: ${val}`);
+          } catch (_) {
+            showToast(val);
+          }
+        });
+      });
+
+      document.getElementById('contact-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('inq-name').value.trim();
+        const subject = document.getElementById('inq-subject').value.trim();
+        const msg = document.getElementById('inq-message').value.trim();
+        const body = encodeURIComponent(`Hello Vaibhav,\n\nFrom: ${name}\n\n${msg}`);
+        const mailtoUrl = `mailto:dhawale.vaibhav80@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+        document.getElementById('form-feedback').textContent = 'Opening your email client...';
+        window.location.href = mailtoUrl;
+      });
+
+      const initialHash = window.location.hash.replace('#', '');
+      if (initialHash && initialHash !== 'home') {
+        navigateTo(initialHash, true);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+  </script>
+</body>
+</html>
